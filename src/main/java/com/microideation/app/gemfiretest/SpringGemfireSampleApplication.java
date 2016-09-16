@@ -51,7 +51,7 @@ class RestController {
     private TestService testService;
 
     @RequestMapping(path = "/add/{rwdId}/{rwdBalance}" , method = RequestMethod.GET)
-    public void addBalance(@PathVariable(value = "rwdId") Long rwdId,
+    public CustomerRewardBalance addBalance(@PathVariable(value = "rwdId") Long rwdId,
                            @PathVariable(value = "rwdBalance") Double balance) {
 
         CustomerRewardBalance customerRewardBalance = new CustomerRewardBalance();
@@ -59,6 +59,8 @@ class RestController {
         customerRewardBalance.setRewardCurrencyId(rwdId);
 
         testService.saveRewardBalance(customerRewardBalance);
+
+        return customerRewardBalance;
 
     }
 

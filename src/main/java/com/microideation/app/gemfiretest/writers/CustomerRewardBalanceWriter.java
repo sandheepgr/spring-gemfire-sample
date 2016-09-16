@@ -9,6 +9,7 @@ import com.microideation.app.gemfiretest.repository.CustomerRewardBalanceReposit
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,7 +24,7 @@ public class CustomerRewardBalanceWriter implements CacheWriter<Long,CustomerRew
     private static final Logger log = LoggerFactory.getLogger(CustomerRewardBalanceWriter.class);
 
     @Override
-    //@Async("workExecutor")
+    @Async("workExecutor")
     public void beforeUpdate(EntryEvent<Long, CustomerRewardBalance> longCustomerRewardBalanceEntryEvent) throws CacheWriterException {
 
         update(longCustomerRewardBalanceEntryEvent.getNewValue());
@@ -32,7 +33,7 @@ public class CustomerRewardBalanceWriter implements CacheWriter<Long,CustomerRew
     }
 
     @Override
-    //@Async("workExecutor")
+    @Async("workExecutor")
     public void beforeCreate(EntryEvent<Long, CustomerRewardBalance> longCustomerRewardBalanceEntryEvent) throws CacheWriterException {
 
 

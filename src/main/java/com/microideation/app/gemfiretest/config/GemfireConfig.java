@@ -25,7 +25,7 @@ import java.util.Properties;
  * Created by sandheepgr on 30/6/16.
  */
 @Configuration
-@ComponentScan(basePackages = {"com.microideation.app.gemfiretest.loaders", "com.microideation.app.gemfiretest.writers"})
+@ComponentScan(basePackages = {"com.microideation.app.gemfiretest.loaders", "com.microideation.app.gemfiretest.writers","com.microideation.app.gemfiretest.listeners"})
 public class GemfireConfig {
 
     @Value("${gemfiretest.servername}")
@@ -63,13 +63,14 @@ public class GemfireConfig {
     }
 
     @Bean
-    public AsyncEventQueue gemfireQueue(CacheFactoryBean gemfireCache )  throws Exception {
+    public AsyncEventQueue gemfireQueue(CacheFactoryBean gemfireCache ,MyAsyncEventListener myAsyncEventListener)  throws Exception {
 
         AsyncEventQueueFactory factory = gemfireCache.getObject().createAsyncEventQueueFactory();
         factory.setPersistent(false);
         factory.setParallel(false);
-        AsyncEventListener listener = new MyAsyncEventListener();
-        AsyncEventQueue asyncQueue = factory.create("sampleQueue", listener);
+        factory.setBatchConflationEnabled(true);
+        factory.setBatchSize(100);
+        AsyncEventQueue asyncQueue = factory.create("sampleQueue", myAsyncEventListener);
         return asyncQueue;
 
     }
@@ -89,8 +90,8 @@ public class GemfireConfig {
         crbRegion.setClose(false);
         crbRegion.setName("crb");
         crbRegion.setAsyncEventQueues(new AsyncEventQueue[]{gemfireQueue});
-//        crbRegion.setCacheLoader(customerRewardBalanceLoader);
-//        crbRegion.setCacheWriter(customerRewardBalanceWriter);
+        crbRegion.setCacheLoader(customerRewardBalanceLoader);
+        /*crbRegion.setCacheWriter(customerRewardBalanceWriter);*/
         crbRegion.setPersistent(false);
         return crbRegion;
 

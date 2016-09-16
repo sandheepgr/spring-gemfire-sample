@@ -6,6 +6,7 @@ import com.microideation.app.gemfiretest.repository.CustomerRewardBalanceReposit
 import com.microideation.app.gemfiretest.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class TestServiceImpl implements TestService {
     private CustomerRewardBalanceRepository customerRewardBalanceRepository;
 
 
-    //@CachePut(cacheNames = "crb", key = "#result.rewardCurrencyId")
+    @CachePut(cacheNames = "crb", key = "#result.rewardCurrencyId")
     public CustomerRewardBalance saveRewardBalance(CustomerRewardBalance customerRewardBalance) {
 
      /*   CustomerRewardBalance existingBalance = customerRewardBalanceRepository.findByRewardCurrencyId(customerRewardBalance.getRewardCurrencyId());
@@ -45,8 +46,9 @@ public class TestServiceImpl implements TestService {
         }
 
         customerRewardBalanceRepository.save(customerRewardBalance);*/
-        crbRegion.put(customerRewardBalance.getRewardCurrencyId(),customerRewardBalance);
+        /*crbRegion.put(customerRewardBalance.getRewardCurrencyId(),customerRewardBalance);*/
         //customerRewardBalanceRepository.save(customerRewardBalance);
+
         return customerRewardBalance;
 
     }
@@ -54,7 +56,7 @@ public class TestServiceImpl implements TestService {
     @Cacheable("crb")
     public CustomerRewardBalance findCustomerRewardBalance(Long rewardCurrencyId) {
 
-        return crbRegion.get(rewardCurrencyId);
+        return customerRewardBalanceRepository.findByRewardCurrencyId(rewardCurrencyId);
 
     }
 }
